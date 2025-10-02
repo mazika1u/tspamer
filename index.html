@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>まじかる WebRaider Pro</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    /* スクロールバーのスタイル */
+    ::-webkit-scrollbar { width: 8px; }
+    ::-webkit-scrollbar-track { background: #1a1b1e; border-radius: 4px; }
+    ::-webkit-scrollbar-thumb { background: linear-gradient(135deg, #ff6b6b, #ee5a24); border-radius: 4px; }
+    ::-webkit-scrollbar-thumb:hover { background: linear-gradient(135deg, #ff5252, #d63031); }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, #0c0c0c, #1a1a1a);
+      color: #fff;
+      margin: 0; padding: 0;
+      display: flex; justify-content: center; align-items: center;
+      min-height: 100vh;
+      padding: 20px;
+    }
+    
+    .card {
+      background: rgba(30, 30, 30, 0.95);
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6),
+                  0 0 0 1px rgba(255, 107, 107, 0.1);
+      width: 100%; max-width: 700px;
+      animation: fadeIn 1s ease;
+      overflow: auto; max-height: 95vh;
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 107, 107, 0.2);
+    }
+    
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(30px) scale(0.95); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    
+    @keyframes glow {
+      0% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.3); }
+      50% { box-shadow: 0 0 30px rgba(255, 107, 107, 0.6); }
+      100% { box-shadow: 0 0 20px rgba(255, 107, 107, 0.3); }
+    }
+    
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      position: relative;
+    }
+    
+    .header::after {
+      content: '';
+      position: absolute;
+      bottom: -10px;
+      left: 25%;
+      width: 50%;
+      height: 3px;
+      background: linear-gradient(90deg, transparent, #ff6b6b, transparent);
+      border-radius: 2px;
+    }
+    
+    h2 {
+      background: linear-gradient(135deg, #ff6b6b, #ffa726);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin: 0 0 10px;
+      font-weight: 700;
+      font-size: 2.2rem;
+      letter-spacing: 1px;
+      text-shadow: 0 2px 10px rgba(255, 107, 107, 0.3);
+    }
+    
+    .subtitle {
+      color: #aaa;
+      font-size: 0.9rem;
+      margin-bottom: 5px;
+    }
+    
+    .section {
+      margin-bottom: 25px;
+      background: rgba(40, 40, 40, 0.5);
+      padding: 15px;
+      border-radius: 12px;
+      border-left: 3px solid #ff6b6b;
+    }
+    
+    .section-title {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+      color: #ff6b6b;
+      font-weight: 600;
+    }
+    
+    .section-title i {
+      font-size: 1.1rem;
+    }
+    
+    label {
+      display: block;
+      margin-top: 15px;
+      font-size: 14px;
+      color: #ddd;
+      font-weight: 500;
+    }
+    
+    label:first-child {
+      margin-top: 0;
+    }
+
+    /* テキスト入力 */
+    input[type="text"], textarea {
+      width: 100%; padding: 12px; margin-top: 8px;
+      border-radius: 10px; border: 1px solid #444;
+      background: #1a1a1a; color: #fff;
+      font-family: 'Courier New', monospace; 
+      resize: vertical;
+      transition: all 0.3s;
+      font-size: 14px;
+    }
+    
+    input[type="text"]:focus, textarea:focus {
+      outline: none;
+      border-color: #ff6b6b;
+      box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+    }
+    
+    input[type="number"] {
+      padding: 8px; margin-top: 6px;
+      border-radius: 8px; border: 1px solid #444;
+      background: #1a1a1a; color: #fff;
+      font-family: monospace; appearance: none;
+      width: 100px;
+      transition: all 0.3s;
+    }
+    
+    input[type="number"]:focus {
+      outline: none;
+      border-color: #ff6b6b;
+      box-shadow: 0 0 0 2px rgba(255, 107, 107, 0.2);
+    }
+    
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button {
+      -webkit-appearance: none; margin: 0;
+    }
+
+    /* ファイル入力のカスタムデザイン */
+    .file-input-container {
+      position: relative;
+      margin-top: 8px;
+    }
+    
+    .file-input-label {
+      display: block;
+      padding: 14px;
+      border: 2px dashed #555;
+      border-radius: 10px;
+      background: #1a1a1a;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.3s;
+      color: #aaa;
+      font-size: 14px;
+    }
+    
+    .file-input-label:hover {
+      border-color: #ff6b6b;
+      background: #222;
+      color: #ff6b6b;
+    }
+    
+    .file-input-label.has-file {
+      border-color: #4cd964;
+      color: #4cd964;
+      background: rgba(76, 217, 100, 0.1);
+    }
+    
+    #messageFile {
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      cursor: pointer;
+    }
+    
+    .file-name {
+      margin-top: 5px;
+      font-size: 12px;
+      color: #4cd964;
+      text-align: center;
+    }
+
+    /* フレックス行 */
+    .row {
+      display: flex; gap: 15px; align-items: center;
+      flex-wrap: wrap;
+    }
+    
+    .row > * { flex: none; }
+    .row label,
+    .row .checkbox-container { margin-top: 0; }
+
+    /* トグルスイッチ */
+    .checkbox-container {
+      display: flex; align-items: center; gap: 10px;
+      cursor: pointer; font-size: 14px; user-select: none;
+      margin-top: 10px;
+      padding: 8px 0;
+    }
+    
+    .checkbox-container input {
+      appearance: none; width: 50px; height: 26px;
+      background: #444; border-radius: 25px;
+      position: relative; transition: all 0.3s ease;
+    }
+    
+    .checkbox-container:hover input { background: #555; }
+    
+    .checkbox-container input:focus {
+      outline: none; box-shadow: 0 0 0 3px rgba(255, 107, 107, 0.5);
+    }
+    
+    .checkbox-container input::before {
+      content: ''; position: absolute;
+      width: 20px; height: 20px; border-radius: 50%;
+      background: #fff; top: 3px; left: 3px;
+      transition: transform 0.3s cubic-bezier(.68,-.55,.27,1.55);
+    }
+    
+    .checkbox-container input:checked { 
+      background: linear-gradient(135deg, #ff6b6b, #ffa726);
+    }
+    
+    .checkbox-container input:checked::before {
+      transform: translateX(24px);
+    }
+    
+    .checkbox-container span { 
+      transition: color 0.3s;
+      color: #ccc;
+    }
+    
+    .checkbox-container input:checked + span {
+      color: #ffa726;
+      font-weight: 600;
+    }
+
+    /* ボタン */
+    button.primary {
+      margin-top: 25px; width: 100%; padding: 16px;
+      border: none; border-radius: 12px;
+      background: linear-gradient(135deg, #ff6b6b, #ffa726);
+      color: #fff; font-weight: 700; font-size: 18px;
+      letter-spacing: 1px; cursor: pointer; position: relative;
+      overflow: hidden; transition: all 0.3s;
+      box-shadow: 0 5px 15px rgba(255, 107, 107, 0.4);
+      text-transform: uppercase;
+    }
+    
+    button.primary:hover {
+      background: linear-gradient(135deg, #ff5252, #ff9800);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(255, 107, 107, 0.6);
+    }
+    
+    button.primary:active {
+      transform: translateY(0);
+      box-shadow: 0 3px 10px rgba(255, 107, 107, 0.4);
+    }
+    
+    button.primary.loading {
+      color: #ffffffa2; pointer-events: none;
+      background: linear-gradient(135deg, #777, #999);
+    }
+
+    button.secondary {
+      margin-top: 10px; padding: 10px 16px;
+      background: linear-gradient(135deg, #555, #666);
+      color: #fff; font-size: 14px; border: none; border-radius: 8px;
+      position: relative; overflow: hidden;
+      transition: all 0.3s;
+      font-weight: 600;
+    }
+    
+    button.secondary:hover {
+      background: linear-gradient(135deg, #666, #777);
+      transform: translateY(-1px);
+    }
+
+    /* 停止・退出ボタン強調 */
+    #stopSpam, #leaveBtn {
+      width: 48%; padding: 12px;
+      border: none; border-radius: 10px;
+      background: linear-gradient(135deg, #ff4757, #ff3838);
+      color: #fff; font-weight: 700; font-size: 14px;
+      letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s;
+      margin-top: 15px;
+      box-shadow: 0 4px 12px rgba(255, 71, 87, 0.4);
+    }
+    
+    #stopSpam:hover, #leaveBtn:hover {
+      background: linear-gradient(135deg, #ff2e4d, #ff1e1e);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(255, 71, 87, 0.6);
+    }
+    
+    #stopSpam:active, #leaveBtn:active {
+      transform: translateY(0);
+    }
+
+    .button-container {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    /* Advanced options (details) */
+    details { 
+      margin-top: 20px; 
+      background: rgba(40, 40, 40, 0.5);
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    
+    summary { 
+      list-style: none; 
+      padding: 15px 20px; 
+      cursor: pointer; 
+      font-weight: 600; 
+      position: relative; 
+      margin-top: 0;
+      color: #ffa726;
+      transition: all 0.3s;
+    }
+    
+    summary:hover {
+      background: rgba(255, 167, 38, 0.1);
+    }
+    
+    summary::-webkit-details-marker { display: none; }
+    summary::marker { content: none; }
+    
+    summary::before { 
+      content: '▶'; 
+      position: absolute; 
+      left: 15px; 
+      top: 50%; 
+      transform: translateY(-50%); 
+      transition: transform 0.3s ease;
+      font-size: 0.8rem;
+    }
+    
+    details[open] > summary::before { 
+      transform: translateY(-50%) rotate(90deg);
+    }
+    
+    .detail-content { 
+      padding: 0 20px 15px 20px;
+      transform-origin: top center; 
+      transform: scaleY(0); 
+      opacity: 0; 
+      transition: transform 0.3s ease, opacity 0.3s ease;
+    }
+    
+    details[open] .detail-content { 
+      transform: scaleY(1); 
+      opacity: 1;
+    }
+
+    #log { 
+      margin-top: 20px; 
+      padding: 15px; 
+      height: 150px; 
+      overflow-y: auto; 
+      background: #1a1a1a; 
+      border-radius: 10px; 
+      font-family: 'Courier New', monospace; 
+      font-size: 13px; 
+      white-space: pre-wrap; 
+      resize: vertical;
+      border: 1px solid #333;
+    }
+    
+    .log-entry {
+      margin: 5px 0;
+      padding: 3px 0;
+      border-bottom: 1px solid #2a2a2a;
+    }
+    
+    .log-time {
+      color: #ffa726;
+      font-weight: 600;
+    }
+    
+    .log-success { color: #4cd964; }
+    .log-error { color: #ff6b6b; }
+    .log-warning { color: #ffd93d; }
+    .log-info { color: #6bc5ff; }
+    
+    @media (max-width: 768px) {
+      .card {
+        padding: 20px;
+        max-width: 100%;
+        border-radius: 15px;
+      }
+      
+      h2 { font-size: 1.8rem; }
+      
+      .row { flex-direction: column; align-items: stretch; }
+      .row label { width: 100%; }
+      
+      .button-container { flex-direction: column; }
+      #stopSpam, #leaveBtn { width: 100%; }
+      
+      input[type="number"] { width: 100%; }
+    }
+
+    small { 
+      color: #777; 
+      font-size: 12px; 
+      display: block; 
+      margin-top: 5px;
+      font-style: italic;
+    }
+    
+    .example {
+      color: #888;
+      font-size: 12px;
+      margin-top: 3px;
+      font-family: 'Courier New', monospace;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="header">
+      <h2>まじかる WebRaider Pro</h2>
+      <div class="subtitle">Advanced Web Raider with Anti-Detection</div>
+    </div>
+    
+    <form id="form">
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-key"></i>
+          <span>使用token設定</span>
+        </div>
+        
+        <label>tokenリスト
+          <textarea id="tokens" rows="4" placeholder="tokenをカンマ、改行、またはスペースで区切って入力"></textarea>
+          <div class="example">例: MtMisyzg3NDc0ODgyNTI5MDAxMg.GYF5p9.9p9p9p9p9p9p9p9p9p9p9p9p9p9p9p9p9p9p9p9</div>
+        </label>
+
+        <label>サーバーID
+          <input type="text" id="guildId" required placeholder="サーバーIDを入力">
+          <div class="example">例: 123456789012345678</div>
+        </label>
+
+        <label>チャンネルIDリスト
+          <textarea id="channelIds" rows="2" placeholder="チャンネルIDをカンマ、改行、またはスペースで区切って入力"></textarea>
+          <div class="example">例: 111111111111111111, 222222222222222222</div>
+        </label>
+        <button type="button" id="autoFillChannels" class="secondary">
+          <i class="fas fa-sync-alt"></i> チャンネル自動取得
+        </button>
+      </div>
+
+      <div class="section">
+        <div class="section-title">
+          <i class="fas fa-file-alt"></i>
+          <span>メッセージ設定</span>
+        </div>
+        
+        <label>メッセージファイル</label>
+        <div class="file-input-container">
+          <input type="file" id="messageFile" accept=".txt" required>
+          <label for="messageFile" class="file-input-label" id="fileInputLabel">
+            <i class="fas fa-cloud-upload-alt"></i>
+            <span>クリックしてテキストファイルを選択</span>
+          </label>
+        </div>
+        <div class="file-name" id="fileName">ファイルが選択されていません</div>
+        <small>選択したテキストファイルの内容全体が1つのメッセージとして送信されます</small>
+
+        <label class="checkbox-container">
+          <input type="checkbox" id="allmention" checked>
+          <span>@everyoneを追加</span>
+        </label>
+        
+        <label class="checkbox-container">
+          <input type="checkbox" id="randomize">
+          <span>メッセージをランダマイズ（UUID追加）</span>
+        </label>
+        
+        <div class="row">
+          <label>送信間隔
+            <input type="number" id="delay" min="0" step="0.1" placeholder="0"> 秒
+          </label>
+          <label>送信上限
+            <input type="number" id="limit" min="1" step="1" placeholder="無制限"> 回
+          </label>
+        </div>
+      </div>
+
+      <details>
+        <summary><i class="fas fa-users"></i> メンション設定</summary>
+        <div class="detail-content">
+          <label>メンションするユーザーIDリスト
+            <textarea id="mentionIds" rows="2" placeholder="ユーザーIDをカンマ、改行、またはスペースで区切って入力"></textarea>
+            <div class="example">例: 111111111111111111, 222222222222222222</div>
+          </label>
+          <button type="button" id="fetchMentions" class="secondary">
+            <i class="fas fa-user-friends"></i> メンション自動取得
+          </button>
+        </div>
+      </details>
+
+      <details>
+        <summary><i class="fas fa-poll"></i> 投票設定</summary>
+        <div class="detail-content">
+          <label>投票タイトル
+            <input type="text" id="pollTitle" placeholder="投票のタイトルを入力">
+          </label>
+          <label>投票選択肢
+            <textarea id="pollAnswers" rows="2" placeholder="選択肢をカンマ、改行、またはスペースで区切って入力"></textarea>
+            <div class="example">例: 選択肢1, 選択肢2, 選択肢3</div>
+          </label>
+        </div>
+      </details>
+
+      <button id="submitBtn" type="submit" class="primary" disabled>
+        <i class="fas fa-play"></i> 実行開始
+      </button>
+    </form>
+    
+    <div class="button-container">
+      <button id="stopSpam" class="secondary" disabled>
+        <i class="fas fa-stop"></i> 送信停止
+      </button>
+      <button id="leaveBtn" class="secondary">
+        <i class="fas fa-sign-out-alt"></i> サーバー退出
+      </button>
+    </div>
+
+    <div id="log"></div>
+  </div>
+
+  <script>
+    // ファイル選択のUI改善
+    document.getElementById('messageFile').addEventListener('change', function(e) {
+      const fileName = this.files[0] ? this.files[0].name : 'ファイルが選択されていません';
+      const label = document.getElementById('fileInputLabel');
+      const nameDisplay = document.getElementById('fileName');
+      
+      nameDisplay.textContent = fileName;
+      
+      if (this.files[0]) {
+        label.classList.add('has-file');
+        nameDisplay.style.color = '#4cd964';
+      } else {
+        label.classList.remove('has-file');
+        nameDisplay.style.color = '#ff6b6b';
+      }
+    });
+  </script>
+
+  <script>
+    // ここに上記の完全なscript.jsのコードを貼り付けてください
+    const logEl = document.getElementById('log');
+    const x_super_properties = 'eyJvcyI6IldpbmRvd3MiLCJicm93c2VyIjoiQ2hyb21lIiwiZGV2aWNlIjoiIiwic3lzdGVtX2xvY2FsZSI6ImVuLVVTIiwiaGFzX2NsaWVudF9tb2RzIjpmYWxzZSwiYnJvd3Nlcl91c2VyX2FnZW50IjoiTW96aWxsYS81LjAgKFdpbmRvd3MgTlQgMTAuMDsgV2luNjQ7IHg2NCkgQXBwbGVXZWJLaXQvNTM3LjM2IChLSFRNTCwgbGlrZSBHZWNrbykgQ2hyb21lLzEzNC4wLjAuMCBTYWZhcmkvNTM3LjM2IiwiYnJvd3Nlcl92ZXJzaW9uIjoiMTM0LjAuMC4wIiwib3NfdmVyc2lvbiI6IjEwIiwicmVmZXJyZXIiOiJodHRwczovL2Rpc2NvcmQuY29tIiwicmVmZXJyaW5nX2RvbWFpbiI6ImRpc2NvcmQuY29tIiwicmVmZXJyZXJfY3VycmVudCI6IiIsInJlZmVycmluZ19kb21haW5fY3VycmVudCI6IiIsInJlbGVhc2VfY2hhbm5lbCI6InN0YWJsZSIsImNsaWVudF9idWlsZF9udW1iZXIiOjM4NDg4NywiY2xpZW50X2V2ZW50X3NvdXJjZSI6bnVsbH0=';
+
+    // 高度なレート制限回避システム
+    class RateLimitBypass {
+        constructor() {
+            this.tokenRotations = new Map();
+            this.lastRequestTimes = new Map();
+            this.failedTokens = new Set();
+        }
+
+        getOptimalToken(tokens) {
+            const validTokens = tokens.filter(token => !this.failedTokens.has(token));
+            if (validTokens.length === 0) return null;
+
+            // 使用頻度が最も低いトークンを選択
+            const now = Date.now();
+            let selectedToken = validTokens[0];
+            let minUsage = Infinity;
+
+            for (const token of validTokens) {
+                const lastUsed = this.lastRequestTimes.get(token) || 0;
+                const usageCount = this.tokenRotations.get(token) || 0;
+                
+                if (usageCount < minUsage || (now - lastUsed) > 60000) {
+                    selectedToken = token;
+                    minUsage = usageCount;
+                }
+            }
+
+            this.tokenRotations.set(selectedToken, (this.tokenRotations.get(selectedToken) || 0) + 1);
+            this.lastRequestTimes.set(selectedToken, now);
+            return selectedToken;
+        }
+
+        markTokenFailed(token) {
+            this.failedTokens.add(token);
+            setTimeout(() => this.failedTokens.delete(token), 300000); // 5分後にリセット
+        }
+    }
+
+    const rateLimitBypass = new RateLimitBypass();
+
+    function appendLog(message) {
+        const timestamp = new Date().toLocaleTimeString();
+        logEl.textContent += '\n' + timestamp + ' | ' + message;
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+
+    function clearLog() {
+        logEl.textContent = '';
+    }
+
+    let shouldStopSpam = false;
+    let messageContent = '';
+
+    const tokensInput = document.getElementById('tokens');
+    const guildInput = document.getElementById('guildId');
+    const channelInput = document.getElementById('channelIds');
+    const messageFileInput = document.getElementById('messageFile');
+    const randomizeCheckbox = document.getElementById('randomize');
+    const allmentionCheckbox = document.getElementById('allmention');
+    const delayInput = document.getElementById('delay');
+    const limitInput = document.getElementById('limit');
+    const mentionInput = document.getElementById('mentionIds');
+    const pollTitleInput = document.getElementById('pollTitle');
+    const pollAnswersInput = document.getElementById('pollAnswers');
+    const autoFillBtn = document.getElementById('autoFillChannels');
+    const fetchMentionsBtn = document.getElementById('fetchMentions');
+    const submitBtn = document.getElementById('submitBtn');
+    const stopBtn = document.getElementById('stopSpam');
+    const leaveBtn = document.getElementById('leaveBtn');
+    const form = document.getElementById('form');
+
+    function sleep(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    function parseList(input) {
+        const items = input.split(/[\s,]+/).map(item => item.trim()).filter(item => item);
+        return [...new Set(items)];
+    }
+
+    // 高度なIPローテーションシミュレーション
+    function getRandomIP() {
+        return `104.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}.${Math.floor(Math.random() * 255)}`;
+    }
+
+    // ユーザーエージェントローテーション
+    const userAgents = [
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36',
+        'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/131.0.0.0 Safari/537.36'
+    ];
+
+    function getRandomUserAgent() {
+        return userAgents[Math.floor(Math.random() * userAgents.length)];
+    }
+
+    // 高度なメッセージ変形システム
+    function transformMessage(content, options = {}) {
+        let transformed = content;
+        
+        // ゼロ幅文字の挿入
+        const zeroWidthChars = ['\u200B', '\u200C', '\u200D', '\uFEFF'];
+        if (options.obfuscate) {
+            const insertPos = Math.floor(Math.random() * transformed.length);
+            const zwChar = zeroWidthChars[Math.floor(Math.random() * zeroWidthChars.length)];
+            transformed = transformed.slice(0, insertPos) + zwChar + transformed.slice(insertPos);
+        }
+        
+        // 文字の置換（似ている文字）
+        const charReplacements = {
+            'a': ['а', 'ɑ', 'а̀'], // キリル文字など
+            'e': ['е', 'ё', 'è'],
+            'i': ['і', 'ì', 'í'],
+            'o': ['о', 'ó', 'ò'],
+            'u': ['υ', 'ù', 'ú']
+        };
+        
+        if (options.charReplace) {
+            transformed = transformed.split('').map(char => {
+                const replacements = charReplacements[char.toLowerCase()];
+                if (replacements && Math.random() < 0.3) {
+                    return replacements[Math.floor(Math.random() * replacements.length)];
+                }
+                return char;
+            }).join('');
+        }
+        
+        // ランダムな空白の追加
+        if (options.addSpaces && Math.random() < 0.2) {
+            const spaces = [' ', '  ', '\u2004', '\u2005'];
+            const space = spaces[Math.floor(Math.random() * spaces.length)];
+            const insertPos = Math.floor(Math.random() * transformed.length);
+            transformed = transformed.slice(0, insertPos) + space + transformed.slice(insertPos);
+        }
+        
+        return transformed;
+    }
+
+    async function leaveGuild(token, guildId) {
+        const headers = {
+            'Authorization': token,
+            'Content-Type': 'application/json',
+            'x-super-properties': x_super_properties,
+            'User-Agent': getRandomUserAgent(),
+            'X-Forwarded-For': getRandomIP(),
+            'CF-Connecting-IP': getRandomIP()
+        };
+        
+        try {
+            const response = await fetch(`https://discord.com/api/v9/users/@me/guilds/${guildId}`, {
+                'method': 'DELETE',
+                'headers': headers,
+                'body': JSON.stringify({'lurking': false}),
+                'referrerPolicy': 'no-referrer'
+            });
+            
+            if (response.status === 204) {
+                appendLog('✅ 退出成功: ' + token.slice(0, 10) + '*****');
+                return true;
+            } else {
+                const errorData = await response.json().catch(() => ({}));
+                appendLog('❌ ' + token.slice(0, 10) + '***** - 退出失敗(' + response.status + '): ' + JSON.stringify(errorData));
+                return false;
+            }
+        } catch (error) {
+            appendLog('❌ ' + token.slice(0, 10) + '***** - 退出エラー: ' + error.message);
+            return false;
+        }
+    }
+
+    // ファイル読み込み処理
+    messageFileInput.addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                messageContent = e.target.result;
+                appendLog('✅ ファイル読み込み完了: ' + file.name);
+                checkFormValidity();
+            };
+            reader.readAsText(file);
+        }
+    });
+
+    autoFillBtn.addEventListener('click', async () => {
+        clearLog();
+        const tokens = parseList(tokensInput.value);
+        const guildId = guildInput.value.trim();
+        
+        if (!tokens.length) return appendLog('⚠️ トークンを入力してください');
+        if (!guildId) return appendLog('⚠️ サーバーIDを入力してください');
+        
+        const token = rateLimitBypass.getOptimalToken(tokens);
+        if (!token) return appendLog('⚠️ 有効なトークンがありません');
+        
+        try {
+            const headers = {
+                'Authorization': token,
+                'Content-Type': 'application/json',
+                'x-super-properties': x_super_properties,
+                'User-Agent': getRandomUserAgent(),
+                'X-Forwarded-For': getRandomIP()
+            };
+            
+            const response = await fetch(`https://discord.com/api/v9/guilds/${guildId}/channels`, {
+                'headers': headers,
+                'referrerPolicy': 'no-referrer'
+            });
+            
+            if (!response.ok) throw new Error(`HTTP ${response.status}: ${JSON.stringify(await response.json())}`);
+            
+            const channels = await response.json();
+            const textChannels = channels.filter(channel => channel.type === 0).map(channel => channel.id);
+            
+            if (!textChannels.length) return appendLog('テキストチャンネルが見つかりません');
+            
+            channelInput.value = textChannels.join(',');
+            appendLog('✅ チャンネル取得完了: ' + textChannels.length + '個のチャンネル');
+        } catch (error) {
+            appendLog('❌ エラー：' + error.message);
+            rateLimitBypass.markTokenFailed(token);
+        }
+    });
+
+    fetchMentionsBtn.addEventListener('click', async () => {
+        clearLog();
+        const tokens = parseList(tokensInput.value);
+        const guildId = guildInput.value.trim();
+        const channels = parseList(channelInput.value);
+        
+        if (!tokens.length) return appendLog('⚠️ トークンを入力してください');
+        if (!guildId) return appendLog('⚠️ サーバーIDを入力してください');
+        if (!channels.length) return appendLog('⚠️ チャンネルIDを入力してください');
+        
+        const token = rateLimitBypass.getOptimalToken(tokens);
+        if (!token) return appendLog('⚠️ 有効なトークンがありません');
+        
+        const ws = new WebSocket('wss://gateway.discord.gg/?v=9&encoding=json');
+        
+        ws.onopen = () => {
+            ws.send(JSON.stringify({
+                'op': 2,
+                'd': {
+                    'token': token,
+                    'properties': {
+                        'os': 'Windows',
+                        'browser': 'Chrome',
+                        'device': '',
+                        'system_locale': 'en-US',
+                        'browser_user_agent': getRandomUserAgent(),
+                        'browser_version': '134.0.0.0',
+                        'os_version': '10',
+                        'referrer': 'https://discord.com',
+                        'referring_domain': 'discord.com',
+                        'referrer_current': '',
+                        'referring_domain_current': '',
+                        'release_channel': 'stable',
+                        'client_build_number': 384887,
+                        'client_event_source': null
+                    },
+                    'intents': 1 << 12
+                }
+            }));
+        };
+        
+        ws.onmessage = event => {
+            const data = JSON.parse(event.data);
+            
+            if (data.op === 0 && data.t === 'READY') {
+                ws.send(JSON.stringify({
+                    'op': 14,
+                    'd': {
+                        'guild_id': guildId,
+                        'typing': false,
+                        'activities': false,
+                        'threads': true,
+                        'channels': {[channels[0]]: [[0, 0]]}
+                    }
+                }));
+            }
+            
+            if (data.t === 'GUILD_MEMBER_LIST_UPDATE') {
+                const members = data.d.ops[0].items.map(item => item.member).filter(member => member);
+                const userIds = members.map(member => member.user.id);
+                
+                if (userIds.length) {
+                    mentionInput.value = userIds.join(',');
+                    appendLog('✅ メンション取得完了: ' + userIds.length + '人のユーザー');
+                } else {
+                    appendLog('メンション対象のユーザーが見つかりません');
+                }
+                ws.close();
+            }
+        };
+        
+        ws.onerror = (error) => {
+            appendLog('❌ WebSocketエラー: ' + error.message);
+            ws.close();
+        };
+        
+        ws.onclose = () => {
+            appendLog('ℹ️ WebSocket接続終了');
+        };
+    });
+
+    async function authenticateOnly(token) {
+        return new Promise(resolve => {
+            const ws = new WebSocket('wss://gateway.discord.gg/?v=9&encoding=json');
+            let authenticated = false;
+            
+            ws.onopen = () => {
+                ws.send(JSON.stringify({
+                    'op': 2,
+                    'd': {
+                        'token': token,
+                        'properties': {
+                            'os': 'Windows',
+                            'browser': 'Chrome',
+                            'device': '',
+                            'system_locale': 'en-US',
+                            'browser_user_agent': getRandomUserAgent(),
+                            'browser_version': '134.0.0.0',
+                            'os_version': '10'
+                        },
+                        'intents': 0
+                    }
+                }));
+            };
+            
+            ws.onmessage = event => {
+                const data = JSON.parse(event.data);
+                if (data.t === 'READY') {
+                    authenticated = true;
+                    appendLog('✅ 認証完了: ' + token.slice(0, 10) + '*****');
+                    ws.close();
+                    resolve(true);
+                } else if (data.t === 'INVALID_SESSION') {
+                    appendLog('❌ 認証失敗: ' + token.slice(0, 10) + '*****');
+                    ws.close();
+                    resolve(false);
+                }
+            };
+            
+            ws.onerror = () => {
+                appendLog('❌ WebSocket エラー: ' + token.slice(0, 10) + '*****');
+                ws.close();
+                resolve(false);
+            };
+            
+            ws.onclose = () => {
+                if (!authenticated) {
+                    resolve(false);
+                }
+            };
+            
+            // タイムアウト処理
+            setTimeout(() => {
+                if (!authenticated) {
+                    ws.close();
+                    resolve(false);
+                }
+            }, 10000);
+        });
+    }
+
+    // 高度なメッセージ送信関数（Wick対策）
+    async function sendMessageAdvanced(token, channelId, message, options = {}) {
+        const headers = {
+            'Authorization': token,
+            'Content-Type': 'application/json',
+            'x-super-properties': x_super_properties,
+            'User-Agent': getRandomUserAgent(),
+            'X-Forwarded-For': getRandomIP(),
+            'CF-Connecting-IP': getRandomIP(),
+            'Accept': 'application/json, text/plain, */*',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Origin': 'https://discord.com',
+            'Referer': `https://discord.com/channels/${options.guildId || '@me'}/${channelId}`,
+            'Sec-Fetch-Dest': 'empty',
+            'Sec-Fetch-Mode': 'cors',
+            'Sec-Fetch-Site': 'same-origin'
+        };
+        
+        let payload = {'content': message || ''};
+        
+        // メッセージ変形を適用
+        if (options.obfuscate) {
+            payload.content = transformMessage(payload.content, {
+                obfuscate: true,
+                charReplace: true,
+                addSpaces: true
+            });
+        }
+        
+        if (options.randomize) {
+            payload.content += '\n' + Math.random().toString(36).substring(2, 15);
+        }
+        
+        if (options.allmention) {
+            payload.content = '@everyone\n' + payload.content;
+        }
+        
+        if (options.randomMentions && options.randomMentions.length > 0) {
+            const randomMention = options.randomMentions[Math.floor(Math.random() * options.randomMentions.length)];
+            payload.content = '<@' + randomMention + '>\n' + payload.content;
+        }
+        
+        if (options.pollTitle && options.pollAnswers) {
+            payload.poll = {
+                'question': {'text': options.pollTitle},
+                'answers': options.pollAnswers.map(answer => ({'poll_media': {'text': answer.trim()}})),
+                'allow_multiselect': false,
+                'duration': 1,
+                'layout_type': 1
+            };
+        }
+        
+        // ランダムな遅延を追加（人間らしい挙動）
+        if (options.randomDelay) {
+            await sleep(Math.random() * 2000 + 1000);
+        }
+        
+        try {
+            const response = await fetch(`https://discord.com/api/v9/channels/${channelId}/messages`, {
+                'method': 'POST',
+                'headers': headers,
+                'body': JSON.stringify(payload),
+                'referrerPolicy': 'no-referrer',
+                'mode': 'cors',
+                'credentials': 'include'
+            });
+            
+            return response;
+        } catch (error) {
+            throw new Error(`Network error: ${error.message}`);
+        }
+    }
+
+    async function sendMessageWithRetry(token, channelId, message, options = {}, maxRetries = 8, baseDelay = 2000) {
+        let retryCount = 0;
+        
+        while (retryCount < maxRetries && !shouldStopSpam) {
+            try {
+                const response = await sendMessageAdvanced(token, channelId, message, {
+                    ...options,
+                    randomDelay: retryCount > 0,
+                    obfuscate: retryCount > 2 // リトライ回数が多いほど変形を強化
+                });
+                
+                if (response.ok) {
+                    appendLog('✅ ' + token.slice(0, 10) + '***** - メッセージ送信成功');
+                    return true;
+                } else {
+                    if (response.status === 429) {
+                        const data = await response.json();
+                        const delay = (data.retry_after || 1) * 1000;
+                        const jitter = Math.random() * 1000;
+                        appendLog('⏳  ' + token.slice(0, 10) + '***** - レート制限: ' + (delay/1000).toFixed(1) + 's');
+                        await sleep(delay + jitter);
+                        retryCount++;
+                    } else if (response.status === 400 || response.status === 403) {
+                        const data = await response.json();
+                        appendLog('❌ ' + token.slice(0, 10) + '***** - 送信エラー(' + response.status + '): ' + (JSON.stringify(data) || '詳細不明'));
+                        
+                        // 認証チェック
+                        if (response.status === 403) {
+                            const authTest = await authenticateOnly(token);
+                            if (!authTest) {
+                                rateLimitBypass.markTokenFailed(token);
+                                return false;
+                            }
+                        }
+                        
+                        // 一時的なエラーの場合はリトライ
+                        if (retryCount < 3) {
+                            retryCount++;
+                            await sleep(baseDelay * Math.pow(2, retryCount));
+                        } else {
+                            return false;
+                        }
+                    } else {
+                        const data = await response.json();
+                        appendLog('⚠️ ' + token.slice(0, 10) + '***** - 一時的エラー(' + response.status + '): ' + (JSON.stringify(data) || '詳細不明'));
+                        
+                        if (retryCount < maxRetries - 1) {
+                            retryCount++;
+                            await sleep(baseDelay * Math.pow(2, retryCount));
+                        } else {
+                            return false;
+                        }
+                    }
+                }
+            } catch (error) {
+                appendLog('❌ ' + token.slice(0, 10) + '***** - ネットワークエラー: ' + error.message + ' | 再試行中...');
+                await sleep(baseDelay * Math.pow(2, retryCount));
+                retryCount++;
+            }
+        }
+        
+        if (retryCount >= maxRetries) {
+            appendLog('❌ ' + token.slice(0, 10) + '***** - 最大リトライ回数に達しました');
+            rateLimitBypass.markTokenFailed(token);
+        }
+        
+        return false;
+    }
+
+    function checkFormValidity() {
+        const hasTokens = tokensInput.value.trim();
+        const hasGuildId = guildInput.value.trim();
+        const hasMessage = messageContent.trim();
+        submitBtn.disabled = !(hasTokens && hasGuildId && hasMessage);
+    }
+
+    tokensInput.addEventListener('input', checkFormValidity);
+    guildInput.addEventListener('input', checkFormValidity);
+    messageFileInput.addEventListener('change', checkFormValidity);
+    checkFormValidity();
+
+    form.addEventListener('submit', async event => {
+        event.preventDefault();
+        
+        if (!messageContent) {
+            appendLog('⚠️ メッセージファイルを選択してください');
+            return;
+        }
+        
+        submitBtn.disabled = true;
+        submitBtn.classList.add('loading');
+        submitBtn.textContent = '実行中...';
+        shouldStopSpam = false;
+        stopBtn.disabled = false;
+        
+        const tokens = parseList(tokensInput.value);
+        const guildId = guildInput.value.trim();
+        const channels = parseList(channelInput.value);
+        const randomize = randomizeCheckbox.checked;
+        const allmention = allmentionCheckbox.checked;
+        const delay = parseFloat(delayInput.value) || 0;
+        const limit = limitInput.value.trim() ? parseInt(limitInput.value) : Infinity;
+        const mentions = mentionInput.value.trim() ? parseList(mentionInput.value) : null;
+        const pollTitle = pollTitleInput.value.trim() || null;
+        const pollAnswers = pollAnswersInput.value.trim() ? parseList(pollAnswersInput.value) : null;
+        
+        let messageCount = 0;
+        let activeTokens = new Set(tokens);
+        
+        appendLog(`🚀 開始: ${tokens.length}トークン, ${channels.length}チャンネル`);
+        
+        // 各トークンで並列実行
+        const sendPromises = tokens.map(token => {
+            return async () => {
+                let channelIndex = 0;
+                let tokenMessageCount = 0;
+                
+                while (!shouldStopSpam && messageCount < limit && activeTokens.has(token)) {
+                    if (channelIndex >= channels.length) channelIndex = 0;
+                    const channelId = channels[channelIndex];
+                    channelIndex++;
+                    
+                    const success = await sendMessageWithRetry(
+                        token, 
+                        channelId, 
+                        messageContent,
+                        {
+                            'randomize': randomize,
+                            'randomMentions': mentions,
+                            'pollTitle': pollTitle,
+                            'pollAnswers': pollAnswers,
+                            'allmention': allmention,
+                            'guildId': guildId
+                        }
+                    );
+                    
+                    if (success) {
+                        messageCount++;
+                        tokenMessageCount++;
+                    } else {
+                        // トークンが失敗した場合は非アクティブ化
+                        activeTokens.delete(token);
+                        appendLog('⚠️ トークン停止: ' + token.slice(0, 10) + '*****');
+                        break;
+                    }
+                    
+                    if (messageCount >= limit) {
+                        appendLog('✅ 指定数に達しました: ' + messageCount + 'メッセージ');
+                        break;
+                    }
+                    
+                    // 動的遅延調整
+                    if (delay > 0) {
+                        const jitter = Math.random() * delay * 0.5;
+                        await sleep(delay * 1000 + jitter);
+                    }
+                    
+                    // 定期的なトークンローテーション
+                    if (tokenMessageCount % 5 === 0) {
+                        await sleep(1000 + Math.random() * 2000);
+                    }
+                }
+                
+                appendLog('ℹ️ トークン完了: ' + token.slice(0, 10) + '***** - ' + tokenMessageCount + 'メッセージ');
+            };
+        });
+        
+        // 並列実行の制御
+        const BATCH_SIZE = 3; // 同時実行トークン数
+        for (let i = 0; i < sendPromises.length; i += BATCH_SIZE) {
+            if (shouldStopSpam) break;
+            
+            const batch = sendPromises.slice(i, i + BATCH_SIZE);
+            await Promise.all(batch.map(send => send()));
+            
+            // バッチ間の休憩
+            if (i + BATCH_SIZE < sendPromises.length && !shouldStopSpam) {
+                await sleep(5000 + Math.random() * 5000);
+            }
+        }
+        
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        stopBtn.disabled = true;
+        submitBtn.textContent = '実行';
+        appendLog('✅ 全トークンの処理が完了しました');
+    });
+
+    stopBtn.addEventListener('click', () => {
+        shouldStopSpam = true;
+        appendLog('🛑 送信を停止します...');
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = '実行';
+    });
+
+    leaveBtn.addEventListener('click', async () => {
+        shouldStopSpam = true;
+        stopBtn.disabled = true;
+        appendLog('🛑 送信を停止し、退出処理を開始します...');
+        
+        const tokens = parseList(tokensInput.value);
+        const guildId = guildInput.value.trim();
+        
+        if (!tokens.length) return appendLog('⚠️ トークンを入力してください');
+        if (!guildId) return appendLog('⚠️ サーバーIDを入力してください');
+        
+        appendLog(`🚪 ${tokens.length}トークンで退出処理を開始...`);
+        
+        // 退出処理も並列実行
+        const leavePromises = tokens.map(token => leaveGuild(token, guildId));
+        const results = await Promise.all(leavePromises);
+        
+        const successCount = results.filter(result => result).length;
+        appendLog(`✅ 退出処理完了: ${successCount}/${tokens.length} 成功`);
+        
+        submitBtn.disabled = false;
+        submitBtn.classList.remove('loading');
+        submitBtn.textContent = '実行';
+    });
+  </script>
+</body>
+</html>
